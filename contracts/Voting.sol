@@ -94,7 +94,7 @@ contract Voting is Ownable {
             currentElection.votedElectorates[msg.sender] == false,
             "Elector already voted"
         );
-        require(msg.value == VOTING_FEE, "Wrong ethers amount, must be 0.01");
+        require(msg.value == VOTING_FEE, "Incorrect ethers amount");
         address payable contractAddress = payable(address(this));
         contractAddress.transfer(VOTING_FEE);
 
@@ -129,11 +129,11 @@ contract Voting is Ownable {
         uint256 perAddressReward;
         uint256 taxes;
         (perAddressReward, taxes) = distributeReward(winners.length, worth);
+        unallocatedTaxMoney = unallocatedTaxMoney.add(taxes);
         for (uint256 i = 0; i < winners.length; i++) {
             address winner = winners[i];
             payable(winner).transfer(perAddressReward);
         }
-        unallocatedTaxMoney = unallocatedTaxMoney.add(taxes);
         emit DistributeReward(winners.length, perAddressReward, taxes);
     }
 
@@ -149,8 +149,8 @@ contract Voting is Ownable {
         pure
         returns (uint256, uint256)
     {
-        require(winner > 0, "At least one winner must be exist");
-        require(amount > 0, "Winners must receive non empty amount of ethers");
+        require(winner > 0, "Winners are absent");
+        require(amount > 0, "Amount can't be empty");
 
         uint256 taxes = amount / 10;
         // takes worth's 10% only
@@ -170,8 +170,9 @@ contract Voting is Ownable {
     }
 
     function getTaxes() public payable onlyOwner {
-        payable(owner()).transfer(unallocatedTaxMoney);
+        uint256 moneyToTransfer = unallocatedTaxMoney;
         unallocatedTaxMoney = 0;
+        payable(owner()).transfer(moneyToTransfer);
     }
 
     /*

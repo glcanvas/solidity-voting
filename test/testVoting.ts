@@ -259,13 +259,13 @@ describe("Voting", () => {
       voting.voteForCandidate("election 1", nonAuthor.address, {
         value: MORE_ENOUGH_PAYABLE_ETHER,
       })
-    ).to.be.revertedWith("Wrong ethers amount, must be 0.01");
+    ).to.be.revertedWith("Incorrect ethers amount");
 
     await expect(
       voting.voteForCandidate("election 1", nonAuthor.address, {
         value: NOT_ENOUGH_PAYABLE_ETHER,
       })
-    ).to.be.revertedWith("Wrong ethers amount, must be 0.01");
+    ).to.be.revertedWith("Incorrect ethers amount");
 
     expect(await ethers.provider.getBalance(voting.address)).to.be.equal(
       ZERO_ETHER
@@ -388,10 +388,10 @@ describe("Voting", () => {
     const voting = await deployContract();
     await expect(
       voting.distributeReward(BigNumber.from(0), BigNumber.from(10))
-    ).to.be.revertedWith("At least one winner must be exist");
+    ).to.be.revertedWith("Winners are absent");
     await expect(
       voting.distributeReward(BigNumber.from(10), BigNumber.from(0))
-    ).to.be.revertedWith("Winners must receive non empty amount of ethers");
+    ).to.be.revertedWith("Amount can't be empty");
   });
 
   it("finish election reverts", async () => {
