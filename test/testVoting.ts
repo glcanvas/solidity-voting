@@ -9,12 +9,12 @@ const MORE_ENOUGH_PAYABLE_ETHER = ethers.utils.parseEther("1");
 const NOT_ENOUGH_PAYABLE_ETHER = ethers.utils.parseEther("0.001");
 const ZERO_ETHER = ethers.utils.parseEther("0");
 const createEmptyElection = (name: string, active: boolean) => ({
-    electionName: name,
-    isActive: active,
-    rewardDistributed: false,
-    candidates: [],
-    electorate: [],
-  });
+  electionName: name,
+  isActive: active,
+  rewardDistributed: false,
+  candidates: [],
+  electorate: [],
+});
 
 type ElectionInfo = {
   electionName: string;
