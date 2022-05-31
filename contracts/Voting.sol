@@ -36,7 +36,7 @@ contract Voting is Ownable {
         uint256 taxes
     );
     // marks that ether transfer happens
-    event Received(address, uint256);
+    event Received(address sender, uint256 amount);
 
     mapping(string => Election) private electionsMap;
     string[] private electionsList;
@@ -265,16 +265,6 @@ contract Voting is Ownable {
         return electionsList;
     }
 
-    function timeInElectionRange(uint256 startTime)
-        private
-        view
-        returns (bool)
-    {
-        return
-            startTime <= block.timestamp &&
-            block.timestamp <= (startTime + VOTING_DURATION_SEC);
-    }
-
     /*
      * Returns maximum count of votes and candidates count who have this votes
      */
@@ -302,5 +292,15 @@ contract Voting is Ownable {
             }
         }
         return (maxFavoritesCount, maxCount);
+    }
+
+    function timeInElectionRange(uint256 startTime)
+    private
+    view
+    returns (bool)
+    {
+        return
+        startTime <= block.timestamp &&
+        block.timestamp <= (startTime + VOTING_DURATION_SEC);
     }
 }

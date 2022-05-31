@@ -1,36 +1,33 @@
-/*
- * We require the Hardhat Runtime Environment explicitly here. This is optional
- * but useful for running the script in a standalone fashion through `node <script>`.
- *
- * When running the script with `npx hardhat run <script>` you'll find the Hardhat
- * Runtime Environment's members available in the global scope.
+import {ethers, run} from "hardhat";
+import {writeFile} from "fs";
+
+/**
+ * Deploys contract into the network,
+ * storages contact's name into file for further processing.
  */
-import { ethers } from "hardhat";
+async function deploy () {
 
-async function main() {
-  /*
-   * Hardhat always runs the compile task when running scripts with its command
-   * Line interface.
-   *
-   * If this script is run directly using `node` you may want to call compile
-   * Manually to make sure everything is compiled
-   * Await hre.run('compile');
-   */
+    await run("compile");
+    const Voting = await ethers.getContractFactory("Voting");
+    console.log("Starting deploying contract");
+    const voting = await Voting.deploy();
+    await voting.deployed();
+    console.log("Contract deployed to:", voting.address);
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter"),
-    greeter = await Greeter.deploy("Hello, Hardhat!");
+    await new Promise(function () {
+        writeFile(".deployed-address.txt", voting.address, function (err) {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
 
-  await greeter.deployed();
-
-  console.log("Greeter deployed to:", greeter.address);
 }
 
-/*
- * We recommend this pattern to be able to use async/await everywhere
- * and properly handle errors.
- */
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+deploy().
+    then(() => process.exit(0)).
+    catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
+
