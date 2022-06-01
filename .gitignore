@@ -110,3 +110,5 @@ typechain
 #Hardhat files
 cache
 artifacts
+
+.deployed-address.txt
